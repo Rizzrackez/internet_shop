@@ -1,0 +1,42 @@
+{% extends 'wrapper.html' %}
+{% load static %}
+{% block body %}
+
+<div class="row">
+    <div class="col-sm-4">
+        <img src="{{ product.image.url }}" alt="" style="width:80%; height:250px">
+    </div>
+    <div class="col-sm-8">
+         <h2 class="text-center">{{ product.title }}</h2>
+         <p>{{ product.description }}</p>
+
+        <!-- Набор текста -->{% lorem %}<br>{% lorem %}
+        <hr>
+         <p><strong>Цена: {{ product.price }}</strong></p>
+        <a href="#" class="add_to_cart" data-slug="{{ product.slug }}"><button class="btn btn-danger">В корзину</button></a>
+       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script>
+            $(document).ready(function(){
+                $('.add_to_cart').on('click', function(e){
+                    e.preventDefault()
+                    slug = $(this).attr('data-slug')
+                    data = {
+                        slug: slug
+                    }
+                    $.ajax({
+                        type: "GET",
+                        url: '{% url "add_to_cart" %}',
+                        data: data,
+                        success: function(data){
+                            $("#cart_count").html(data.cart_total)
+                        }
+                    })
+                })
+            })
+        </script>
+
+    </div>
+</div>
+
+
+{% endblock %}

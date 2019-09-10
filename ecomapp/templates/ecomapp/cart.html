@@ -1,0 +1,99 @@
+{% extends 'wrapper.html' %}
+{% block body %}
+
+
+<h3 class="text-center">Корзина</h3>
+<br>
+{% if cart.cart_total > 0  %}
+<div class="my-cart">
+<table class="table">
+    <tr>
+        <td class="text-center">Товар</td>
+        <td class="text-center">Кол-во</td>
+        <td class="text-center">Цена</td>
+        <td class="text-center"></td>
+    </tr>
+    {% for item in cart.items.all %}
+    <tr class="cart-item-{{ item.product.id }}">
+        <td class="text-center">{{ item.product.title }}</td>
+        <td class="text-center">
+        <form method="GET">
+            <input type="number" name="qty" data-id="{{ item.id }}" class="cart-item-qty" value="{{ item.qty }}" min="1" style="width: 50px;">
+        </form>
+        </td>
+        <td class="text-center" id="cart-item-total-{{ item.id }}" >{{ item.item_total }} rub</td>
+        <td class="text-center"><a href="#" class="remove_from_cart" data-slug="{{ item.product.slug }}" data-id="{{ item.product.id }}"><button>Удалить из корзины</button></a></td>
+     </tr>
+    {% endfor %}
+     <tr>
+        <td class="text-center"></td>
+        <td class="text-center">Total price:</td>
+        <td class="text-center" id="cart-total-price"><strong>{{ cart.cart_total }} rub</strong></td>
+        <td class="text-center"></td>
+    </tr>
+
+</table>
+    <a href="{% url 'checkout' %}"><button class="btn btn-success ">Предварительный заказ</button></a>
+</div>
+<h3 class="cart-empty"></h3>
+{% else %}
+<br>
+<h3 class="text-center">Ваша корзина пуста!</h3>
+{% endif %}
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script>
+            $(document).ready(function(){
+                $('.remove_from_cart').on('click', function(e){
+                    e.preventDefault()
+                    slug = $(this).attr('data-slug')
+                    item_product_id = $(this).attr('data-id')
+                    data = {
+                        slug: slug
+                    }
+                $.ajax({
+                        type: "GET",
+                        url: '{% url "remove_from_cart" %}',
+                        data: data,
+                        success: function(data){
+                            $("#cart_count").html(data.cart_total)
+                            $(".cart-item-" + item_product_id).css('display', 'none')
+                            $("#cart-total-price").html('<strong>' + parseFloat(data.cart_total_price).toFixed(2) + ' rub </strong>')
+                            if (parseInt(data.cart_total) == 0){
+                                $(".my-cart").css('display', 'none')
+                                $(".cart-empty").html('<br> <h3 class="text-center">Ваша корзина пуста!</h3>')
+                            }
+                        }
+                    })
+                })
+            })
+
+        $(document).ready(function(){
+            $('.cart-item-qty').on('click', function(){
+                qty = $(this).val()
+                item_id = $(this).attr('data-id')
+                data = {
+                    qty: qty,
+                    item_id: item_id
+                }
+                $.ajax({
+                    type: "GET",
+                    url: '{% url "change_item_qty" %}',
+                    data: data,
+                    success: function(data){
+                        $("#cart-item-total-"+item_id).html(parseFloat(data.item_total).toFixed(2) + 'rub')
+                        $("#cart-total-price").html('<strong>' + parseFloat(data.cart_total_price).toFixed(2) + ' rub </strong>')
+
+                    }
+                })
+
+            })
+        })
+        </script>
+
+
+{% endblock %}
+
+
+
+
+
