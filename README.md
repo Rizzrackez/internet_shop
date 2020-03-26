@@ -1,3 +1,3 @@
 # internet_shop
-Интернет магазин написанный с помощью фреймворка django.
+Online store written using the django framework
 
