@@ -1,0 +1,33 @@
+{% extends 'wrapper.html' %}
+{% block body %}
+
+
+<h3 class="text-center">Ваш предворительный заказ</h3>
+<br>
+<table class="table">
+    <tr>
+        <td class="text-center">Товар</td>
+        <td class="text-center">Кол-во</td>
+        <td class="text-center">Цена</td>
+    </tr>
+    {% for item in cart.items.all %}
+    <tr class="cart-item-{{ item.product.id }}">
+        <td class="text-center">{{ item.product.title }}</td>
+        <td class="text-center">{{ item.qty }}</td>
+        <td class="text-center">{{ item.item_total }} rub</td>
+     </tr>
+    {% endfor %}
+     <tr>
+        <td class="text-center"></td>
+        <td class="text-center">Total price:</td>
+        <td class="text-center"><strong>{{ cart.cart_total }} rub</strong></td>
+    </tr>
+</table>
+<a href="{% url 'order' %}" class="text-center"><button class="btn btn-danger">Оформить заказ</button></a>
+
+
+{% endblock %}
+
+
+
+
